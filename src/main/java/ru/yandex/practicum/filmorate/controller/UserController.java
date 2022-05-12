@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public void create(@RequestBody String body, HttpServletResponse response) {
+    public User create(@RequestBody String body, HttpServletResponse response) {
         try {
             Gson gson = StaticData.gsonForAll;
             User user = gson.fromJson(body, User.class);
@@ -42,7 +42,7 @@ public class UserController {
                         users.add( user);
                         log.info("/POST добавлен пользователь");
                         response.setStatus(200);
-                        return;
+                        return user;
                     }
                 }
             }
@@ -50,6 +50,7 @@ public class UserController {
             throw new ValidationException("Не правильно введен пользователь");
         }catch (Exception exception){
             response.setStatus(400);
+            return null;
         }
     }
 
