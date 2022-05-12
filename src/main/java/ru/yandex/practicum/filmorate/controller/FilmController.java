@@ -61,6 +61,28 @@ public class FilmController {
         }
     }
 
+    @PutMapping
+    public void put(@RequestBody String body,HttpServletResponse response) {
+        Gson gson = StaticData.gsonForAll;
+        Film film;
+        try {
+            film = gson.fromJson(body, Film.class);
+        } catch (Exception e) {
+            gson = StaticData.gsonForMinutes;
+            film = gson.fromJson(body, Film.class);
+            boolean flag = false;
+            for(Film f: films){
+                if (f.getId() == film.getId()) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                create(body, response);
+            } else update(body,response);
+        }
+    }
+
     @PatchMapping
     public void update(@RequestBody String body,HttpServletResponse response) {
         try {
