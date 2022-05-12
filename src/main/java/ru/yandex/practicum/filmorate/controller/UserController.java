@@ -18,6 +18,7 @@ import java.util.List;
 public class UserController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final List<User> users = new ArrayList<>();
+    int maxId = 0;
 
     @GetMapping
     public List<User> show() {
@@ -27,15 +28,16 @@ public class UserController {
     @PostMapping
     public void create(@RequestBody String body, HttpServletResponse response) {
         try {
-            Gson gson = StaticData.gson;
+            Gson gson = StaticData.gsonForAll;
             User user = gson.fromJson(body, User.class);
-            System.out.println(user);
             if (!user.getEmail().equals("") && user.getEmail().contains("@")) {
                 if (!user.getLogin().equals("") && !user.getLogin().contains(" ")) {
                     if (user.getName().equals("")) {
                         user.setName(user.getLogin());
                     }
                     if (user.getBirthday().isBefore(LocalDate.now())) {
+                        if(user.getId() == 0) user.setId(maxId+1);
+                        if(maxId<user.getId())maxId  = user.getId();
                         users.add( user);
                         log.info("/POST добавлен пользователь");
                         response.setStatus(200);
@@ -53,7 +55,7 @@ public class UserController {
     @PatchMapping
     public void update(@RequestBody String body, HttpServletResponse response) {
         try {
-            Gson gson = StaticData.gson;
+            Gson gson = StaticData.gsonForAll;
             User user = gson.fromJson(body, User.class);
             if (!user.getEmail().equals("") && user.getEmail().contains("@")) {
                 if (!user.getLogin().equals("") && !user.getLogin().contains(" ")) {

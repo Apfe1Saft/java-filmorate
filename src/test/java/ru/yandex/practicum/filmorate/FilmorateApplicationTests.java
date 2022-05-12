@@ -33,13 +33,13 @@ class FilmorateApplicationTests {
 	}
 	@Test
 	void createFilmTest() throws IOException, InterruptedException {
-		Gson gson = StaticData.gson;
+		Gson gson = StaticData.gsonForAll;
 		URI url = URI.create("http://localhost:8080/films");
 		HttpClient client = HttpClient.newHttpClient();
 		Film film = new Film();
 		film.setName("Film");
 		film.setDescription("good film");
-		film.setId(1);
+		//film.setId(1);
 		film.setDuration(Duration.ofMinutes(30));
 		film.setReleaseDate(LocalDate.of(2021,8,16));
 		HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(film));
@@ -55,7 +55,7 @@ class FilmorateApplicationTests {
 
 	@Test
 	void updateFilmTest() throws IOException, InterruptedException {
-		Gson gson = StaticData.gson;
+		Gson gson = StaticData.gsonForAll;
 		URI url = URI.create("http://localhost:8080/films");
 		HttpClient client = HttpClient.newHttpClient();
 		Film film = new Film();
@@ -84,7 +84,7 @@ class FilmorateApplicationTests {
 
 	@Test
 	void updateUserTest() throws IOException, InterruptedException {
-		Gson gson = StaticData.gson;
+		Gson gson = StaticData.gsonForAll;
 		URI url = URI.create("http://localhost:8080/users");
 		HttpClient client = HttpClient.newHttpClient();
 		User user = new User();
@@ -113,7 +113,7 @@ class FilmorateApplicationTests {
 
 	@Test
 	void createUserTest() throws IOException, InterruptedException {
-		Gson gson = StaticData.gson;
+		Gson gson = StaticData.gsonForAll;
 		URI url = URI.create("http://localhost:8080/users");
 		HttpClient client = HttpClient.newHttpClient();
 		User user = new User();

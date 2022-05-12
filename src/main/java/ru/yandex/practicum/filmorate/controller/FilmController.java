@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.data.StaticData;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import java.util.List;
 public class FilmController {
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final List<Film> films = new ArrayList<>();
+    int maxId = 0;
 
     @GetMapping
     public List<Film> show() {
@@ -30,12 +32,20 @@ public class FilmController {
     @PostMapping
     public void create(@RequestBody String body, HttpServletResponse response) {
         try {
-            Gson gson = StaticData.gson;
-            Film film = gson.fromJson(body, Film.class);
+            Gson gson = StaticData.gsonForAll;
+            Film film;
+            try {
+                 film = gson.fromJson(body, Film.class);
+            }catch (Exception e){
+                gson = StaticData.gsonForMinutes;
+                film = gson.fromJson(body, Film.class);
+            }
             if (film.getName() != null) {
                 if (film.getDescription().length() <= 200) {
                     if (film.getReleaseDate().isAfter(LocalDate.of(1895, 12, 28))) {
                         if (!film.getDuration().isNegative()) {
+                            if(film.getId() == 0) film.setId(maxId+1);
+                            if(maxId<film.getId())maxId  = film.getId();
                             films.add(film);
                             log.info("/POST добавлен фильм");
                             response.setStatus(200);
@@ -54,13 +64,20 @@ public class FilmController {
     @PatchMapping
     public void update(@RequestBody String body,HttpServletResponse response) {
         try {
-            Gson gson = StaticData.gson;
-            Film film = gson.fromJson(body, Film.class);
+            Gson gson = StaticData.gsonForAll;
+            Film film;
+            try {
+                film = gson.fromJson(body, Film.class);
+            }catch (Exception e){
+                gson = StaticData.gsonForMinutes;
+                film = gson.fromJson(body, Film.class);
+            }
             if (!film.getName().equals("") & film.getName() != null) {
                 if (film.getDescription().length() <= 200) {
                     if (film.getReleaseDate().isAfter(LocalDate.of(1895, 12, 28))) {
                         if (!film.getDuration().isNegative()) {
-                            films.removeIf(f -> f.getId() == film.getId());
+                            Film finalFilm = film;
+                            films.removeIf(f -> f.getId() == finalFilm.getId());
                             films.add(film);
                             log.info("/PATCH обновлен фильм");
                             response.setStatus(200);
