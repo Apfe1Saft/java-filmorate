@@ -24,7 +24,6 @@ public class UserController {
         return users;
     }
 
-    @PutMapping
     @PostMapping
     public void create(@RequestBody String body, HttpServletResponse response) {
         try {
