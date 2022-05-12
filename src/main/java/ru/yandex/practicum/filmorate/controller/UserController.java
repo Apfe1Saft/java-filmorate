@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.data.StaticData;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import javax.servlet.http.HttpServletResponse;
@@ -49,6 +50,28 @@ public class UserController {
             throw new ValidationException("Не правильно введен пользователь");
         }catch (Exception exception){
             response.setStatus(400);
+        }
+    }
+
+    @PutMapping
+    public void put(@RequestBody String body,HttpServletResponse response) {
+        Gson gson = StaticData.gsonForAll;
+        User user;
+        try {
+            user = gson.fromJson(body, User.class);
+        } catch (Exception e) {
+            gson = StaticData.gsonForMinutes;
+            user = gson.fromJson(body, User.class);
+            boolean flag = false;
+            for(User u: users){
+                if (u.getId() == user.getId()) {
+                    flag = true;
+                    break;
+                }
+            }
+            if (flag) {
+                create(body, response);
+            } else update(body,response);
         }
     }
 

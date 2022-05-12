@@ -40,16 +40,18 @@ public class FilmController {
                 gson = StaticData.gsonForMinutes;
                 film = gson.fromJson(body, Film.class);
             }
-            if (film.getName() != null) {
-                if (film.getDescription().length() <= 200) {
-                    if (film.getReleaseDate().isAfter(LocalDate.of(1895, 12, 28))) {
-                        if (!film.getDuration().isNegative()) {
-                            if(film.getId() == 0) film.setId(maxId+1);
-                            if(maxId<film.getId())maxId  = film.getId();
-                            films.add(film);
-                            log.info("/POST добавлен фильм");
-                            response.setStatus(200);
-                            return;
+            if (film.getName() != null ) {
+                if(!film.getName().equals("")) {
+                    if (film.getDescription().length() <= 200 & film.getDescription().length()>0) {
+                        if (film.getReleaseDate().isAfter(LocalDate.of(1895, 12, 28))) {
+                            if (!film.getDuration().isNegative()) {
+                                if (film.getId() == 0) film.setId(maxId + 1);
+                                if (maxId < film.getId()) maxId = film.getId();
+                                films.add(film);
+                                log.info("/POST добавлен фильм");
+                                response.setStatus(200);
+                                return;
+                            }
                         }
                     }
                 }
