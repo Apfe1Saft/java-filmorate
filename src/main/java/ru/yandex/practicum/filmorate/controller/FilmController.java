@@ -51,6 +51,7 @@ public class FilmController {
         }
     }
 
+    @PutMapping
     @PatchMapping
     public void update(@RequestBody String body,HttpServletResponse response) {
         try {
