@@ -7,18 +7,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import ru.yandex.practicum.filmorate.data.StaticData;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @SpringBootTest
 class FilmorateApplicationTests {
@@ -27,64 +29,77 @@ class FilmorateApplicationTests {
 	 void serverStart(){
 		FilmorateApplication.main(new String[0]);
 	}
+
 	@AfterEach
 	 void serverStop(){
 		FilmorateApplication.stop();
 	}
+
 	@Test
 	void createFilmTest() throws IOException, InterruptedException {
-		Gson gson = StaticData.gsonForAll;
+		Gson gson = new GsonBuilder()
+				.setPrettyPrinting()
+				.registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+				.create();
 		URI url = URI.create("http://localhost:8080/films");
 		HttpClient client = HttpClient.newHttpClient();
 		Film film = new Film();
+		film.setId(1);
 		film.setName("Film");
 		film.setDescription("good film");
 		//film.setId(1);
-		film.setDuration(Duration.ofMinutes(30));
+		film.setDuration(30);
 		film.setReleaseDate(LocalDate.of(2021,8,16));
 		HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(film));
-		HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+		HttpRequest request = HttpRequest.newBuilder().uri(url).setHeader("Content-Type","application/json").POST(body).build();
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-		url = URI.create("http://localhost:8080/films");
+		//url = URI.create("http://localhost:8080/films");
 		client = HttpClient.newHttpClient();
 		request = HttpRequest.newBuilder().uri(url).GET().build();
 		response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		assertEquals(response.body(),"[{\"id\":1,\"name\":\"Film\",\"description\":\"good film\",\"releaseDate\":\"2021-08-16\",\"duration\":\"PT30M\"}]");
+		assertEquals(response.body(),"[{\"id\":1,\"name\":\"Film\",\"description\":\"good film\",\"releaseDate\":\"2021-08-16\",\"duration\":30}]");
 	}
 
 	@Test
 	void updateFilmTest() throws IOException, InterruptedException {
-		Gson gson = StaticData.gsonForAll;
+		Gson gson = new GsonBuilder()
+				.setPrettyPrinting()
+				.registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+				.create();
 		URI url = URI.create("http://localhost:8080/films");
 		HttpClient client = HttpClient.newHttpClient();
 		Film film = new Film();
+		film.setId(1);
 		film.setName("Film");
 		film.setDescription("good film");
-		film.setId(1);
-		film.setDuration(Duration.ofMinutes(30));
+		//film.setId(1);
+		film.setDuration(30);
 		film.setReleaseDate(LocalDate.of(2021,8,16));
 		HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(film));
-		HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+		HttpRequest request = HttpRequest.newBuilder().uri(url).setHeader("Content-Type","application/json").POST(body).build();
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 		url = URI.create("http://localhost:8080/films");
 		client = HttpClient.newHttpClient();
 		film.setDescription("bad film");
 		body = HttpRequest.BodyPublishers.ofString(gson.toJson(film));
-		request = HttpRequest.newBuilder().uri(url).method("PATCH",body).build();
+		request = HttpRequest.newBuilder().uri(url).setHeader("Content-Type","application/json").method("PATCH",body).build();
 		response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 		url = URI.create("http://localhost:8080/films");
 		client = HttpClient.newHttpClient();
 		request = HttpRequest.newBuilder().uri(url).GET().build();
 		response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		assertEquals(response.body(),"[{\"id\":1,\"name\":\"Film\",\"description\":\"bad film\",\"releaseDate\":\"2021-08-16\",\"duration\":\"PT30M\"}]");
+		assertEquals(response.body(),"[{\"id\":1,\"name\":\"Film\",\"description\":\"bad film\",\"releaseDate\":\"2021-08-16\",\"duration\":30}]");
 	}
 
 	@Test
 	void updateUserTest() throws IOException, InterruptedException {
-		Gson gson = StaticData.gsonForAll;
+		Gson gson = new GsonBuilder()
+				.setPrettyPrinting()
+				.registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+				.create();
 		URI url = URI.create("http://localhost:8080/users");
 		HttpClient client = HttpClient.newHttpClient();
 		User user = new User();
@@ -94,14 +109,14 @@ class FilmorateApplicationTests {
 		user.setLogin("Ivanov");
 		user.setEmail("AlexIvanov@yandex.ru");
 		HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(user));
-		HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+		HttpRequest request = HttpRequest.newBuilder().uri(url).setHeader("Content-Type","application/json").POST(body).build();
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 		url = URI.create("http://localhost:8080/users");
 		client = HttpClient.newHttpClient();
 		user.setLogin("Petrov");
 		body = HttpRequest.BodyPublishers.ofString(gson.toJson(user));
-		request = HttpRequest.newBuilder().uri(url).method("PATCH",body).build();
+		request = HttpRequest.newBuilder().uri(url).setHeader("Content-Type","application/json").method("PATCH",body).build();
 		response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 		url = URI.create("http://localhost:8080/users");
@@ -113,7 +128,10 @@ class FilmorateApplicationTests {
 
 	@Test
 	void createUserTest() throws IOException, InterruptedException {
-		Gson gson = StaticData.gsonForAll;
+		Gson gson = new GsonBuilder()
+				.setPrettyPrinting()
+				.registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+				.create();
 		URI url = URI.create("http://localhost:8080/users");
 		HttpClient client = HttpClient.newHttpClient();
 		User user = new User();
@@ -123,7 +141,7 @@ class FilmorateApplicationTests {
 		user.setLogin("Ivanov");
 		user.setEmail("AlexIvanov@yandex.ru");
 		HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(gson.toJson(user));
-		HttpRequest request = HttpRequest.newBuilder().uri(url).POST(body).build();
+		HttpRequest request = HttpRequest.newBuilder().uri(url).setHeader("Content-Type","application/json").POST(body).build();
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 		url = URI.create("http://localhost:8080/users");
@@ -133,4 +151,11 @@ class FilmorateApplicationTests {
 		assertEquals(response.body(),"[{\"id\":1,\"email\":\"AlexIvanov@yandex.ru\",\"login\":\"Ivanov\",\"name\":\"Alex\",\"birthday\":\"2009-08-16\"}]");
 	}
 
+}
+class LocalDateAdapter implements JsonSerializer<LocalDate> {
+
+	@Override
+	public JsonElement serialize(LocalDate date, java.lang.reflect.Type typeOfSrc, JsonSerializationContext context) {
+		return new JsonPrimitive(date.format(DateTimeFormatter.ISO_LOCAL_DATE));
+	}
 }
