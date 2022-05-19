@@ -16,7 +16,7 @@ import java.util.List;
 @Slf4j
 public class UserController {
     private final List<User> users = new ArrayList<>();
-    int maxId = 0;
+    private int maxId = 0;
 
     @GetMapping
     public List<User> show() {
