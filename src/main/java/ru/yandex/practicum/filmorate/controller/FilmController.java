@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 public class FilmController {
     private final List<Film> films = new ArrayList<>();
-    private int maxId = 0;
+    int maxId = 0;
 
     @GetMapping
     public List<Film> show() {
