@@ -74,7 +74,7 @@ public class FilmController {
             log.info("/PATCH обновлен фильм");
             response.setStatus(200);
         } catch (Exception exception) {
-            response.setStatus(400);
+            response.setStatus(500);
         }
     }
 }

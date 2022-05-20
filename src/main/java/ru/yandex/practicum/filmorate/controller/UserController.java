@@ -79,7 +79,7 @@ public class UserController {
             log.info("/PATCH обновлен пользователь");
             response.setStatus(200);
         } catch (Exception exception) {
-            response.setStatus(400);
+            response.setStatus(500);
         }
     }
 }
