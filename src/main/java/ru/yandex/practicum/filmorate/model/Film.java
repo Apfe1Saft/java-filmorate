@@ -4,10 +4,10 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.validation.Constraint;
@@ -16,13 +16,11 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 
 @Data
-public class Film {
-    @Min(0)
+public class Film implements Comparable<Film>{
     private int id;
     @NotBlank
     @Size(min = 1)
@@ -34,6 +32,20 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
+    private Set<Long> likes = new HashSet<>();//contains user id
+    public void addLike(long l){
+        likes.add(l);
+    }
+    public int likesCount(){
+        return likes.size();
+    }
+
+    @Override
+    public int compareTo(Film o) {
+        Integer firstCount = this.likesCount();
+        Integer secondCount = o.likesCount();
+        return secondCount.compareTo(firstCount);
+    }
 }
 
 @Target({ElementType.METHOD, ElementType.FIELD})

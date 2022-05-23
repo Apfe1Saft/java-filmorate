@@ -7,18 +7,17 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class User {
-    @Min(0)
     private int id;
     @NotBlank
     @Email
@@ -28,7 +27,13 @@ public class User {
     private String name;
     @BirthdayConstraint
     private LocalDate birthday;
+    private Set<Integer> friends = new HashSet<>();
+
+    public void addFriend(Integer l) {
+        friends.add(l);
+    }
 }
+
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = BirthdayValidator.class)
