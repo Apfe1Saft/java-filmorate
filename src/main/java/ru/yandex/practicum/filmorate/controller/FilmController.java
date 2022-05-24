@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -30,9 +31,7 @@ public class FilmController {
     @GetMapping
     public List<Film> show() {
         log.info("/GET films");
-        if (service.getStorage().getFilms() != null)
-            return service.getStorage().getFilms();
-        else return null;
+        return service.getStorage().getFilms();
     }
 
     @PostMapping
@@ -48,17 +47,15 @@ public class FilmController {
 
     @PutMapping
     public @Valid Film put(@Valid @RequestBody final Film film, HttpServletResponse response, BindingResult result) {
-        boolean flag = false;
-        if (film.getId() < 0) throw new ValidationException("");
-        for (Film f : service.getStorage().getFilms()) {
-            if (f.getId() == film.getId()) {
-                flag = true;
-                break;
-            }
+        if (film.getId() < 0) {
+            throw new ValidationException("");
         }
-        if (flag) {
-            return update(film, response, result);
-        } else return create(film, response, result);
+
+        if (Objects.isNull(service.getStorage().find(film.getId()))) {
+            return create(film, response, result);
+        }
+
+        return update(film, response, result);
     }
 
     @PatchMapping

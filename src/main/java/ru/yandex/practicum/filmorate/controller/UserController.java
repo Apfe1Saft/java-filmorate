@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.service.UserService;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @Validated
 @RestController
@@ -78,9 +77,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getById(@PathVariable int id) {
+    public User getById(@PathVariable int id) {
         if (id < 0) throw new ValidationException("");
-        return service.getStorage().getUsers().stream().filter(x -> x.getId() == id).findFirst();
+        return service.getStorage().find(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
