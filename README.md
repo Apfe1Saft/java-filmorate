@@ -1,2 +1,2 @@
 БД
-![alt text](README_static.DB)
+![фото диаграммы]([README_static.DB](https://github.com/Apfe1Saft/java-filmorate/blob/main/README_static/DB.png))
