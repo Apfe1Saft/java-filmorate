@@ -1,6 +1,6 @@
 ### Filmorate
 
-![alt text](README_static.DBv3)
+![alt text]([README_static.DBv3](https://github.com/Apfe1Saft/java-filmorate/blob/add-database/README_static/DBv3.png))
 
 ### ПРИМЕРЫ КОМАНД:
 
