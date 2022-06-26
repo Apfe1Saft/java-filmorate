@@ -25,11 +25,12 @@ public class UserController {
 
     @GetMapping
     public List<User> show() {
-        return service.getStorage().getUsers();
+        return service.getStorage().getAllUsers();
     }
 
     @PostMapping
     public User create(@Valid @RequestBody User user, HttpServletResponse response, BindingResult result) {
+        System.out.println("CREATE");
         if (user.getId() < 0) throw new ValidationException("");
         if (result.hasErrors()) {
             throw new ValidationException("");
@@ -37,7 +38,8 @@ public class UserController {
         if (user.getName().equals("")) {
             user.setName(user.getLogin());
         }
-        service.getStorage().add(user);
+        if (user.getId() == 0) user.setId(1);
+        user = service.getStorage().addUser(user);
         log.info("/POST добавлен пользователь");
         response.setStatus(200);
         return user;
@@ -50,7 +52,7 @@ public class UserController {
             throw new ValidationException("");
         }
         boolean flag = false;
-        for (User u : service.getStorage().getUsers()) {
+        for (User u : service.getStorage().getAllUsers()) {
             if (u.getId() == user.getId()) {
                 flag = true;
                 break;
@@ -70,7 +72,7 @@ public class UserController {
         if (user.getName().equals("")) {
             user.setName(user.getLogin());
         }
-        service.getStorage().update(user);
+        service.getStorage().updateUser(user);
         log.info("/PATCH обновлен пользователь");
         response.setStatus(200);
         return user;
@@ -79,7 +81,7 @@ public class UserController {
     @GetMapping("/{id}")
     public User getById(@PathVariable int id) {
         if (id < 0) throw new ValidationException("");
-        return service.getStorage().find(id);
+        return service.getStorage().findUserById(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
@@ -93,7 +95,12 @@ public class UserController {
     public void addFriend(@PathVariable("id") int id, @PathVariable("friendId") int friendId, HttpServletResponse response) {
         if (friendId < 0 || id < 0) throw new ValidationException("");
         response.setStatus(200);
-        service.addFriend(id, friendId);
+        try {
+            service.addFriend(id, friendId);
+        }
+        catch (ValidationException e){
+
+        }
     }
 
     @GetMapping("/{id}/friends")
@@ -107,5 +114,4 @@ public class UserController {
     public void removeLike(@PathVariable("id") int id, @PathVariable("friendId") int friendId) {
         service.removeFriend(id, friendId);
     }
-
 }

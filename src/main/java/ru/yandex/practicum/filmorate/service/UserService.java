@@ -3,47 +3,38 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.impl.UserDBStorageImpl;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 
+import javax.xml.bind.ValidationException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.LongStream;
 
 @Service
 @Data
 public class UserService {
-    InMemoryUserStorage storage;
+    UserDBStorageImpl storage;
 
     @Autowired
-    public UserService(InMemoryUserStorage storage) {
+    public UserService(UserDBStorageImpl storage) {
         this.storage = storage;
     }
 
     public void addFriend(int firstUser, int secondUser) {
-        storage.find(firstUser).addFriend(secondUser);
-        storage.find(secondUser).addFriend(firstUser);
+        storage.addFriend(firstUser, secondUser);
     }
 
-    public void removeFriend(int firstUser, int secondUser) {
-        storage.find(firstUser).getFriends().removeIf(f -> f == secondUser);
-        storage.find(secondUser).getFriends().removeIf(f -> f == firstUser);
+    public void removeFriend(int firstUser, int secondUser)  {
+        storage.removeFriend(firstUser, secondUser);
     }
 
     public List<User> mutualFriends(int firstUser, int secondUser) {
-        List<User> answer = new LinkedList<>();
-        for (Integer l : storage.find(firstUser).getFriends()) {
-            if (storage.find(secondUser).getFriends().contains(l)) {
-                answer.add(storage.find(l));
-            }
-        }
-        return answer;
+        return storage.getCommonFriends(firstUser, secondUser);
     }
 
     public List<User> getFriends(int id) {
-        List<User> answer = new LinkedList<>();
-        for (int i : storage.find(id).getFriends()) {
-            answer.add(storage.find(i));
-        }
-        return answer;
+        return storage.getAllFriends(id);
     }
 }

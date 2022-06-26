@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,7 +30,7 @@ public class FilmController {
     @GetMapping
     public List<Film> show() {
         log.info("/GET films");
-        return service.getStorage().getFilms();
+        return service.getStorage().getAllFilms();
     }
 
     @PostMapping
@@ -39,7 +38,7 @@ public class FilmController {
         if (result.hasErrors() || film.getId() < 0) {
             throw new ValidationException("");
         }
-        service.getStorage().add(film);
+        service.getStorage().createFilm(film);
         log.info("/POST добавлен фильм");
         response.setStatus(200);
         return film;
@@ -51,7 +50,7 @@ public class FilmController {
             throw new ValidationException("");
         }
 
-        if (Objects.isNull(service.getStorage().find(film.getId()))) {
+        if (Objects.isNull(service.getStorage().getFilmById(film.getId()))) {
             return create(film, response, result);
         }
 
@@ -63,10 +62,10 @@ public class FilmController {
         if (result.getErrorCount() != 0 || film.getId() < 0) {
             throw new ValidationException("");
         }
-        if (service.getStorage().find(film.getId()) == null) {
+        if (service.getStorage().getFilmById(film.getId()) == null) {
             throw new ObjectNotFoundException("");
         }
-        service.getStorage().update(film);
+        service.getStorage().updateFilm(film);
         log.info("/PATCH обновлен фильм");
         response.setStatus(200);
         return film;
@@ -74,7 +73,7 @@ public class FilmController {
 
     @GetMapping("/{id}")
     public Optional<Film> getById(@PathVariable("id") int id, HttpServletResponse response) {
-        Optional<Film> film = Optional.ofNullable(service.getStorage().find(id));
+        Optional<Film> film = Optional.ofNullable(service.getStorage().getFilmById(id));
         if (film.isPresent()) {
             response.setStatus(200);
             return film;
