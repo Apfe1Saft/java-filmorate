@@ -32,7 +32,7 @@ public class Film implements Comparable<Film> {
     @Min(1)
     private int duration;
     private Set<Genre> genres = null;
-    private Set<Integer> likes = new HashSet<>();//contains user id
+    private Set<Integer> likes = new HashSet<>();
     @NotNull
     private MPA mpa;
 

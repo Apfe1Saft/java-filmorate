@@ -19,7 +19,8 @@ public class Genre {
         this.id = id;
         this.name = GenreController.getGenreByID(id).getName();
     }
-    public Genre(int id,String name) {
+
+    public Genre(int id, String name) {
         this.id = id;
         this.name = name;
     }
