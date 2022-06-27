@@ -1,11 +1,12 @@
 package ru.yandex.practicum.filmorate.dao;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Set;
 
 public interface GenreDBStorage {
-    public Film.Genre getGenreById(int id);
+    Genre getGenreById(int id);
 
-    public Set<Film.Genre> getAllGenres();
+    Set<Genre> getAllGenres();
 }

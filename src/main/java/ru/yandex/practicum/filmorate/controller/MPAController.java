@@ -15,10 +15,10 @@ import java.util.List;
 @RequestMapping("/mpa")
 @Slf4j
 public class MPAController {
-    private MPAService service;
+    private static MPAService service;
 
     public MPAController(MPAService service) {
-        this.service = service;
+        MPAController.service = service;
     }
 
     @GetMapping
@@ -28,7 +28,7 @@ public class MPAController {
     }
 
     @GetMapping("/{id}")
-    public MPA getMPAById(@PathVariable("id") int id) {
+    public static MPA getMPAById(@PathVariable("id") int id) {
         if (id < 1 || id > 5) throw new ValidationException("Wrong mpa id.");
         log.info("/genres/{id} выполнен");
         return service.getStorage().getMPAById(id);

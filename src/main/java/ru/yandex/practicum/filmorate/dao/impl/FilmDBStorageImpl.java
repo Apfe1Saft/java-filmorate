@@ -7,6 +7,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.FilmDBStorage;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class FilmDBStorageImpl implements FilmDBStorage {
             int likeRows = jdbcTemplate.update("insert into likes(film_id,user_id) values(?,?)", film.getId(), id);
         }
         if (film.getGenres() != null) {
-            for (Film.Genre genres : film.getGenres()) {
+            for (Genre genres : film.getGenres()) {
                 int likeRows = jdbcTemplate.update("insert into genre_list(film_id,genre_id) values(?,?)", film.getId(), genres.getId());
             }
         }
