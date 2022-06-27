@@ -1,4 +1,4 @@
-drop table films,users,genre_list,likes,friends,mpa,genres;
+--drop table films,users,genre_list,likes,friends,mpa,genres;
 create table if not exists films
 (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
