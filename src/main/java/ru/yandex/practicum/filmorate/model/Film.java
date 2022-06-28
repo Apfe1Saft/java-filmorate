@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.util.*;
 
 import lombok.*;
-import ru.yandex.practicum.filmorate.controller.GenreController;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -56,7 +55,10 @@ public class Film implements Comparable<Film> {
                 addGenre(id);
             }
         }
+    }
 
+    public void makeGenres(Set<Genre> genres) {
+        this.genres = genres;
     }
 
     public Film() {
@@ -77,6 +79,11 @@ public class Film implements Comparable<Film> {
         this.releaseDate = LocalDate.parse(releaseDate);
         this.duration = duration;
         this.setMpa(new MPA(mpa));
+    }
+
+    public void addGenre(int id,String name) {
+        if (genres == null) genres = new HashSet<>();
+        genres.add(new Genre(id,name));
     }
 
     public void addGenre(int id) {

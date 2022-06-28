@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.controller.GenreController;
+import ru.yandex.practicum.filmorate.controller.MPAController;
 import ru.yandex.practicum.filmorate.dao.FilmDBStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -77,10 +79,11 @@ public class FilmDBStorageImpl implements FilmDBStorage {
                     filmRows.getString("release_date"),
                     filmRows.getInt("duration")
             );
-            film.setMpa(new MPA(filmRows.getInt("mpa_id")));
+            film.setMpa(MPAController.getMPAById(filmRows.getInt("mpa_id")));
             filmRows = jdbcTemplate.queryForRowSet("select * from genre_list where film_id = ?", id);
             while (filmRows.next()) {
-                film.addGenre(filmRows.getInt("genre_id"));
+                film.addGenre(filmRows.getInt("genre_id"),
+                        GenreController.getGenreByID(filmRows.getInt("genre_id")).getName());
             }
             log.info("Найден фильм: {} {}", film.getId(), film.getName());
 

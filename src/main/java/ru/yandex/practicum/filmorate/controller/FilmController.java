@@ -38,6 +38,7 @@ public class FilmController {
         if (result.hasErrors() || film.getId() < 0) {
             throw new ValidationException("");
         }
+        film.setMpa(MPAController.getMPAById(film.getMpa().getId()));
         service.getStorage().createFilm(film);
         log.info("/POST добавлен фильм");
         response.setStatus(200);

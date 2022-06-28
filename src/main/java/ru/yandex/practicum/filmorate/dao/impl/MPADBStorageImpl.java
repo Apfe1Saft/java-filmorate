@@ -3,12 +3,13 @@ package ru.yandex.practicum.filmorate.dao.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.MPADBStorage;
+import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.MPA;
 
-import java.util.ArrayList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Component
@@ -22,21 +23,22 @@ public class MPADBStorageImpl implements MPADBStorage {
     }
     @Override
     public MPA getMPAById(int id) {
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from mpa where mpa_id = ?", id);
-        if(mpaRows.next()){
-            return new MPA(mpaRows.getInt("mpa_id"),mpaRows.getString("mpa_name"));
+        final String sqlQuery = "select * from MPA where MPA_ID = ?";
+        final List<MPA> films = jdbcTemplate.query(sqlQuery, MPADBStorageImpl::makeMpa, id);
+        if (films.size() != 1) {
+            throw new ObjectNotFoundException("map id=" + id);
         }
-        return null;
+        return films.get(0);
     }
 
     @Override
     public List<MPA> getAllMPA() {
-        List<MPA> mpaList = new ArrayList<>();
-        SqlRowSet mpaRows = jdbcTemplate.queryForRowSet("select * from mpa");
-        while(mpaRows.next()){
-            MPA mpa = new MPA(mpaRows.getInt("mpa_id"),mpaRows.getString("mpa_name"));
-            mpaList.add(mpa);
-        }
-        return mpaList;
+        return jdbcTemplate.query("select * from MPA", MPADBStorageImpl::makeMpa);
+    }
+
+    static MPA makeMpa(ResultSet rs, int rowNum) throws SQLException {
+        return new MPA(
+                rs.getInt("mpa_id"),
+                rs.getString("mpa_name"));
     }
 }
