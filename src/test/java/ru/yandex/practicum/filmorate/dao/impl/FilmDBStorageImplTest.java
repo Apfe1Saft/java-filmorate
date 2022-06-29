@@ -40,7 +40,7 @@ class FilmDBStorageImplTest {
     @Test
     void updateFilm() {
         storage.updateFilm(new Film(1, "New Name", "description", "1979-04-17", 3, 1));
-        assertEquals(storage.getFilmById(1), new Film(1, "New Name", "description", "1979-04-17", 3, 1));
+        assertEquals(storage.getFilmById(1).toString(), "Film(id=1, name=New Name, rate=0, description=description, releaseDate=1979-04-17, duration=3, genres=null, likes=[], mpa=MPA(id=1, name=G))");
     }
 
     @Test
