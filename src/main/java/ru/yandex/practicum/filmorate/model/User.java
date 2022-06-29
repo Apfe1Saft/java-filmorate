@@ -13,8 +13,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
 public class User {
@@ -27,10 +26,35 @@ public class User {
     private String name;
     @BirthdayConstraint
     private LocalDate birthday;
-    private Set<Integer> friends = new HashSet<>();
+    private List<Integer> friends = new ArrayList<>();
 
-    public void addFriend(Integer l) {
-        friends.add(l);
+    public List<Integer> getFriends() {
+        return friends;
+    }
+
+    public void addFriend(int id) {
+        if (!friends.contains(id)) {
+            friends.add(id);
+        }
+    }
+
+    public User(int id, String name, String login, String email, String birthday) {
+        this.id = id;
+        this.name = name;
+        this.login = login;
+        this.email = email;
+        this.birthday = LocalDate.parse(birthday);
+    }
+
+    public User(String name, String login, String email, String birthday) {
+        this.name = name;
+        this.login = login;
+        this.email = email;
+        this.birthday = LocalDate.parse(birthday);
+    }
+
+    public User() {
+
     }
 }
 

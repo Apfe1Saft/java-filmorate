@@ -2,52 +2,46 @@ package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.FilmDBStorage;
+import ru.yandex.practicum.filmorate.dao.impl.FilmDBStorageImpl;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 
+import javax.xml.bind.ValidationException;
 import java.util.*;
 
 @Service
 public class FilmService {
-    private InMemoryFilmStorage storage;
+    private FilmDBStorageImpl storage;
 
     @Autowired
-    public FilmService(InMemoryFilmStorage storage){
+    public FilmService(FilmDBStorageImpl storage) {
         this.storage = storage;
     }
 
-    public void addLike(int filmId, int userId) {
-        if(storage.find(filmId)!=null){
-            storage.find(filmId).addLike(userId);
-        }
-        else {
-            throw new ObjectNotFoundException("Фильма с таким ID нет");
-        }
+    public void addLike(int filmId, int userId){
+        storage.addLike(filmId, userId);
     }
 
-    public void removeLike(int filmId,int userId) {
-        storage.find(filmId).getLikes().removeIf(f -> f == userId);
+    public void removeLike(int filmId, int userId){
+        storage.removeLike(userId, filmId);
     }
 
     public List<Film> popularNFilms(int n) {
-        List<Film> films = storage.getFilms();
-        HashMap<Integer, Film> likesAndFilms = new HashMap<>();
-        Collections.sort(films);
-        int i = 1;
-        for(Film film : films){
-            likesAndFilms.put(i,film);
-            i++;
+        if (n == 0) n = 10;
+        List<Film> films = storage.getFilmsSortedByLikes();
+        List<Film> filmsN = new ArrayList<>();
+        if (films.size() == 0) return null;
+        for (Film film : films) {
+            filmsN.add(film);
+            if (n == 0) break;
+            n--;
         }
-        List<Film> answer= new LinkedList<>();
-        for(int k = 1;k<=n;++k){
-            if(likesAndFilms.get(k) == null) break;
-            answer.add(likesAndFilms.get(k));
-        }
-        return answer;
+        return filmsN;
     }
 
-    public InMemoryFilmStorage getStorage() {
+    public FilmDBStorageImpl getStorage() {
         return storage;
     }
 }
