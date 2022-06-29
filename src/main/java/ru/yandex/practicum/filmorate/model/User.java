@@ -52,7 +52,8 @@ public class User {
         this.email = email;
         this.birthday = LocalDate.parse(birthday);
     }
-    public User(){
+
+    public User() {
 
     }
 }

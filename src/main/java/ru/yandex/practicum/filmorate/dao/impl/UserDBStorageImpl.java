@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.dao.UserDBStorage;
 import ru.yandex.practicum.filmorate.model.User;
 
-import javax.xml.bind.ValidationException;
 import java.util.*;
 
 @Component
@@ -63,29 +62,29 @@ public class UserDBStorageImpl implements UserDBStorage {
 
     @Override
     public void addFriend(int userId, int friendId) {
-            SqlRowSet friendsRowsOne = jdbcTemplate.queryForRowSet("select * from friends where user_id = ? and friend_id = ?",
-                    userId, friendId);
-            if (!friendsRowsOne.next()) {
-                User friend = findUserById(friendId);
-                if (friend.getFriends().contains(userId)) {
-                    int friendsRows = jdbcTemplate.update("insert into friends(user_id,friend_id,status) values(?,?,?)",
-                            userId, friendId, true);
-                } else {
-                    int friendsRows = jdbcTemplate.update("insert into friends(user_id,friend_id,status) values(?,?,?)",
-                            userId, friendId, false);
-                }
+        SqlRowSet friendsRowsOne = jdbcTemplate.queryForRowSet("select * from friends where user_id = ? and friend_id = ?",
+                userId, friendId);
+        if (!friendsRowsOne.next()) {
+            User friend = findUserById(friendId);
+            if (friend.getFriends().contains(userId)) {
+                int friendsRows = jdbcTemplate.update("insert into friends(user_id,friend_id,status) values(?,?,?)",
+                        userId, friendId, true);
+            } else {
+                int friendsRows = jdbcTemplate.update("insert into friends(user_id,friend_id,status) values(?,?,?)",
+                        userId, friendId, false);
             }
+        }
     }
 
     @Override
     public void removeFriend(int userId, int friendId) {
-            User friend = findUserById(friendId);
-            if (friend.getFriends().contains(userId)) {
-                SqlRowSet friendsRows = jdbcTemplate.queryForRowSet("delete from friends where user_id = ? and friend_id = ?", userId, friendId);
-                int friendsInt = jdbcTemplate.update("update friends set status = ? where friend_id = ? and user_id = ?", false, userId, userId);
-            } else {
-                int friendsRows = jdbcTemplate.update("delete from friends where user_id = ? and friend_id = ?", userId, friendId);
-            }
+        User friend = findUserById(friendId);
+        if (friend.getFriends().contains(userId)) {
+            SqlRowSet friendsRows = jdbcTemplate.queryForRowSet("delete from friends where user_id = ? and friend_id = ?", userId, friendId);
+            int friendsInt = jdbcTemplate.update("update friends set status = ? where friend_id = ? and user_id = ?", false, userId, userId);
+        } else {
+            int friendsRows = jdbcTemplate.update("delete from friends where user_id = ? and friend_id = ?", userId, friendId);
+        }
     }
 
     @Override

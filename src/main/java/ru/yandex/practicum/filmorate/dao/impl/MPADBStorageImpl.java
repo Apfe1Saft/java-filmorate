@@ -21,6 +21,7 @@ public class MPADBStorageImpl implements MPADBStorage {
     public MPADBStorageImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
     @Override
     public MPA getMPAById(int id) {
         final String sqlQuery = "select * from MPA where MPA_ID = ?";

@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.controller.MPAController;
 import ru.yandex.practicum.filmorate.dao.FilmDBStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPA;
 
 import java.util.ArrayList;
 import java.util.List;

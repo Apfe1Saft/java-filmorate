@@ -14,12 +14,15 @@ public class MPA {
     @Max(7)
     int id;
     String name;
-    public MPA(){
+
+    public MPA() {
     }
+
     public MPA(int id) {
         this.id = id;
     }
-    public MPA(int id,String name){
+
+    public MPA(int id, String name) {
         this.id = id;
         this.name = name;
     }
